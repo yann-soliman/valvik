@@ -15,7 +15,6 @@
         return isHumid;
     }
     void Valvik::turnElectrovanneOn() {
-        Serial.print("debug electrovanne ON");
         if(this->currentWattering.isRunning) {
             Serial.println("Valvik is already watering");
             return ;
@@ -30,7 +29,7 @@
         this->currentWattering.end = 0;
         this->currentWattering.isRunning = true;
 
-        //TODO: sauvegarder l'état à l'allumage ?
+        saveWateringToHistory(this->currentWattering);
         
     }
     void Valvik::turnElectrovanneOff() {
@@ -53,16 +52,25 @@
         //TODO sauvegarder sur le filesystem ?
         
         Serial.println("Saving new watering history");
-        WATERING_HISTO  * wateringHisto = new WATERING_HISTO(); // Pas réussi à le faire inline...
+        WATERING_HISTO * previousHisto =  &this->wateringHistories[this->historyIndex];
+
+        WATERING_HISTO * wateringHisto = new WATERING_HISTO(); // Pas réussi à le faire inline...
         wateringHisto->start = watering.start;
         wateringHisto->end = watering.end;
-        this->wateringHistories[this->historyIndex++] = *wateringHisto;
+        this->wateringHistories[this->historyIndex] = *wateringHisto;
+
+        if(watering.end != 0) { // Si on sauvegarde l'état final, on change l'index pour la prochaine sauvegarde
+            //TODO: pourquoi ce delete plante ?
+            //delete previousHisto; // libère la mémoire de l'état en cours (dans le cas où on a sauvegardé l'état start uniquement)
+            this->fileService.save(*wateringHisto);
+            this->historyIndex++;
+        }
     }
 
-    unsigned int Valvik::getHistory(WATERING_HISTO ** history) {
+    size_t Valvik::getHistory(WATERING_HISTO * &history) {
         Serial.println((unsigned long) this->wateringHistories, HEX);
-        *history = this->wateringHistories; // On veut envoyer le tableau ET la taille du tableau... pas trouvé mieux que de prendre un pointeur de pointeur pour setter l'adresse du tableau dans le paramètre...
-        return this->historyIndex;
+        Serial.println("KLM IS A BITCH 1");
+        return this->fileService.getWateringHisto(history);
     }
 
     void Valvik::setTime(unsigned long long int time) {

@@ -7,6 +7,23 @@
         "unordered_set": "cpp",
         "vector": "cpp",
         "initializer_list": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "new": "cpp",
+        "*.tcc": "cpp",
+        "bitset": "cpp",
+        "cstddef": "cpp",
+        "cstdio": "cpp",
+        "cstring": "cpp",
+        "cwchar": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "random": "cpp",
+        "fstream": "cpp",
+        "memory": "cpp",
+        "stdexcept": "cpp",
+        "system_error": "cpp",
+        "regex": "cpp",
+        "typeinfo": "cpp",
+        "utility": "cpp"
     }
 }

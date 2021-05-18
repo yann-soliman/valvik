@@ -16,7 +16,9 @@ Webserver::Webserver(Valvik * valvik){
   while(file)
   {
     Serial.print("File: ");
-    Serial.println(file.name());
+    Serial.print(file.name());
+    Serial.print(" | size : ");
+    Serial.println(file.size());
     file.close();
     file = root.openNextFile();
   }
@@ -53,6 +55,11 @@ void Webserver::initRoutes() {
   server->on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request)
   {
     request->send(SPIFFS, "/script.js", "text/javascript");
+  });
+
+  server->on("/chart.min.js", HTTP_GET, [](AsyncWebServerRequest *request)
+  {
+    request->send(SPIFFS, "/chart.min.js", "text/javascript");
   });
 
   server->on("/led", HTTP_GET, [valvik](AsyncWebServerRequest *request)
@@ -94,21 +101,32 @@ void Webserver::initRoutes() {
   server->on("/valvik/history", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
     WATERING_HISTO * history = NULL;
-    int size = valvik->getHistory(&history);
+    int size = valvik->getHistory(history);
+    Serial.print("History size : ");
+    Serial.println(size);
     AsyncResponseStream *response = request->beginResponseStream("application/json");
 
-    DynamicJsonBuffer jsonBuffer;    
+    Serial.println("oh la k 1 ");
+    DynamicJsonBuffer jsonBuffer; 
+    Serial.println("oh la k 2 ");   
     JsonArray &arr = jsonBuffer.createArray();
+    Serial.println("oh la k 3 ");
 
     for(int i = 0; i < size; i++) {
+    Serial.println("oh la k 4 ");
       JsonObject& obj = arr.createNestedObject();
+    Serial.println("oh la k 5 ");
       obj["start"] = history[i].start; 
+    Serial.println("oh la k 6 ");
       obj["end"] =  history[i].end;
     }
     
+    Serial.println("oh la k 7 ");
     arr.printTo(*response);
 
+    Serial.println("oh la k 8 ");
     request->send(response);
+    delete[] history;
   });
 
   server->begin();

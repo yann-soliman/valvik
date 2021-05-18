@@ -1,18 +1,8 @@
 #include <Arduino.h>
 #include "Clock.h"
-
-
-
-struct WATERING {
-    TIMESTAMP start = 0;
-    TIMESTAMP end = 0;
-    boolean isRunning = false;
-};
-
-struct WATERING_HISTO {
-    TIMESTAMP start = 0;
-    TIMESTAMP end = 0;
-};
+#include "Data.h"
+#include "FileService.h"
+#include "ccronexpr.h"
 
 class Valvik {
 
@@ -23,7 +13,7 @@ public:
     void turnElectrovanneOff();
     void setTime(TIMESTAMP time);
     long getTime();
-    unsigned int getHistory(WATERING_HISTO ** history);
+    size_t getHistory(WATERING_HISTO * &history);
 
 private : 
     uint8_t pinCapteurHumidite;
@@ -32,6 +22,7 @@ private :
     WATERING currentWattering; // Etat courant de l'arrosage
     WATERING_HISTO wateringHistories[31]; // Historique des arrosages
     unsigned int historyIndex = 0; // index d'écriture de l'historique
+    FileService fileService;
 
     void saveWateringToHistory(WATERING watering);
 };

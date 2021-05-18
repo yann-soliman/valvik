@@ -1,6 +1,5 @@
 #include <Arduino.h>
-
-#define TIMESTAMP unsigned long long int
+#include "Data.h"
 
 class Clock {
 public:
@@ -9,6 +8,6 @@ public:
     void serialPrintHumanReadable();
 
 private:
-    unsigned long lastSetTimeMCU; // à quel timestamp (du processeur), la clock a été configurée
-    TIMESTAMP time; // un snapshot du timestamp de l'heure réelle
+    unsigned long lastSetTimeMCU = 0; // à quel timestamp (du processeur), la clock a été configurée
+    TIMESTAMP time = 0; // un snapshot du timestamp de l'heure réelle
 };
