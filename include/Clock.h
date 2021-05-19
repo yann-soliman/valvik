@@ -8,6 +8,5 @@ public:
     void serialPrintHumanReadable();
 
 private:
-    unsigned long lastSetTimeMCU = 0; // à quel timestamp (du processeur), la clock a été configurée
-    TIMESTAMP time = 0; // un snapshot du timestamp de l'heure réelle
+    TIMESTAMP time = 0; // un snapshot du timestamp de l'heure réelle (recalculé pour avoir le timestamp au boot de l'esp)
 };

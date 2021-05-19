@@ -1,8 +1,7 @@
 #include "Clock.h"
 
 void Clock::setTime(TIMESTAMP time) {
-    this->time = time;
-    this->lastSetTimeMCU = millis();
+    this->time = time - millis();
 }
 
 TIMESTAMP Clock::now() {
