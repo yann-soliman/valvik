@@ -34,7 +34,7 @@ size_t FileService::getWateringHisto(WATERING_HISTO * &history) {
         history = new WATERING_HISTO[size];
         
         Serial.println("about to read wateringHisto");
-        size_t sizeRead = file.read((uint8_t *) &history, file.size());
+        size_t sizeRead = file.read((uint8_t *) history, file.size());
         Serial.print("Read wateringHisto with size : ");
         Serial.println(sizeRead);
 
