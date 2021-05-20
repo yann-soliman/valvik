@@ -29,7 +29,6 @@ function getHistory() {
 }
 
 function showStats(histo) {
-    //const histo = [{"start":1621195076018,"end":1631196076402}, {"start":1641197086018,"end":1651198086402}];
     const data1 = histo.flatMap(item => {
         const date1 = new Date(item.start).toLocaleString();
         const date2 = new Date(item.end).toLocaleString();
@@ -66,21 +65,5 @@ function openTab(tabId) {
     }
     document.getElementById(tabId).style.display = "block";
 }
-    
-    // setInterval(function getData()
-    // {
-    //     var xhttp = new XMLHttpRequest();
-    
-    //     xhttp.onreadystatechange = function()
-    //     {
-    //         if(this.readyState == 4 && this.status == 200)
-    //         {
-    //             document.getElementById("valeurLuminosite").innerHTML = this.responseText;
-    //         }
-    //     };
-    
-    //     xhttp.open("GET", "lireLuminosite", true);
-    //     xhttp.send();
-    // }, 2000);
     
     
