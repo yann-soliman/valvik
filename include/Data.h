@@ -5,13 +5,7 @@
 typedef struct {
     TIMESTAMP start = 0;
     TIMESTAMP end = 0;
-    bool isRunning = false;
 } WATERING;
-
-typedef struct {
-    TIMESTAMP start = 0;
-    TIMESTAMP end = 0;
-} WATERING_HISTO;
 
 typedef struct {
     bool isStarted = true;

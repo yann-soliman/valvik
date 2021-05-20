@@ -1,62 +1,69 @@
+// On profite du chargement du script pour mettre à jour l'heure du serveur
+fetch('time', {method: "PUT", body: Date.now()})
+    .catch(e => console.log("Error while setting up time " + e));
+
 function onButton() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "valvik/on");
-    xhttp.send();
+    fetch('valvik/on', {method: "POST"})
+    .catch(e => console.log("Error while turning valvik on " + e));
 }
 
 function offButton() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "valvik/off");
-    xhttp.send();
-}
-
-function setTime() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("PUT", "time");
-    xhttp.send(document.getElementById("datetime").valueAsNumber);
+    fetch('valvik/off', {method: "POST"})
+    .catch(e => console.log("Error while turning valvik of " + e));
 }
 
 function getHistory() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "valvik/history");
-    xhttp.onreadystatechange = function(){
-        if(this.readyState == 4 && this.status == 200)
-        {
-            showStats(JSON.parse(this.responseText));
-        }
-    };
-    xhttp.send(document.getElementById("datetime").valueAsNumber);
+    fetch("valvik/history")
+    .then(response => response.json())
+    .then(data => {showStats(data); });
 }
 
+var chart;
+
 function showStats(histo) {
-    const data1 = histo.flatMap(item => {
+    const data_stats = histo.flatMap(item => {
         const date1 = new Date(item.start).toLocaleString();
         const date2 = new Date(item.end).toLocaleString();
         var data1 = {"x" : date1, "y" : false};
         var data2 = {"x" : date1, "y" : true};
         var data3 = {"x" : date2, "y" : true};
         var data4 = {"x" : date2, "y" : false};
-        return [data1, data2, data3, data4]
-    })
-    const data = {
-        datasets: [{
-            label: 'Arrosage',
-            backgroundColor: 'rgba(44, 130, 201, 1)',
-            borderColor: 'rgba(44, 130, 201, 1)',
-            data: data1
-        }]
-    };
-    const config = {
-        type: 'line',
-        data,
-        options: {}
-    };
-    var myChart = new Chart(
-        document.getElementById('arrosage'),
-        config
-        );
+        return [data1, data2, data3, data4];
+    });
+
+    console.log("chart = " + chart);
+    if(chart == undefined) {
+        const data = {
+            datasets: [{
+                label: 'Arrosage',
+                backgroundColor: 'rgba(44, 130, 201, 1)',
+                borderColor: 'rgba(44, 130, 201, 1)',
+                data: data_stats
+            }]
+        };
+        const config = {
+            type: 'line',
+            data,
+            options: {}
+        };
+        chart = new Chart(document.getElementById('arrosage'), config);
     }
-    
+    else {
+        chart.data.datasets[0].data = data_stats; 
+        chart.update();
+    }
+}
+
+function getSettings() {
+    fetch("settings")
+    .then(response => response.json())
+    .then(data => {showSettings(data); });
+}
+
+function showSettings(settings) {
+    document.getElementById('timestamp').innerText = new Date(settings.timestamp).toLocaleString();
+}
+
 function openTab(tabId) {
     var i;
     var x = document.getElementsByClassName("tab");
@@ -65,5 +72,4 @@ function openTab(tabId) {
     }
     document.getElementById(tabId).style.display = "block";
 }
-    
-    
+

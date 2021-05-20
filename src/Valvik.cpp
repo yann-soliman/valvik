@@ -1,85 +1,68 @@
 #include "Valvik.h"
 
-    Valvik::Valvik(uint8_t pinCapteurHudimite, uint8_t pinElectrovanne) {
-        this->pinCapteurHumidite = pinCapteurHumidite;
-        this->pinElectrovanne = pinElectrovanne;
-        pinMode(pinCapteurHumidite, INPUT);
-        pinMode(pinElectrovanne, OUTPUT);
-        digitalWrite(pinElectrovanne, LOW);
+    Valvik::Valvik() {    
+        currentWattering.start = 0;
+        currentWattering.end = 0;
+        historyIndex = 0;
+        settings = fileService.getSettings();
     }
 
     bool Valvik::isHumid() {
-        Serial.print("isHumid ?...");
-        bool isHumid =  !digitalRead(this->pinCapteurHumidite);
-        Serial.println(isHumid);
-        return isHumid;
+        return moistureSensor.isHumid();
     }
     void Valvik::turnElectrovanneOn() {
-        if(this->currentWattering.isRunning) {
+        if(electrovanne.isOn()) {
             Serial.println("Valvik is already watering");
             return ;
         }
-
-        Serial.println("Turning electrovanne ON");
+        
         TIMESTAMP now = this->clock.now();
-        digitalWrite(this->pinElectrovanne, HIGH);
-        Serial.print("Electrovanne turned ON at ");
-        Serial.println(now);
+        electrovanne.on();
         this->currentWattering.start = now;
         this->currentWattering.end = 0;
-        this->currentWattering.isRunning = true;
 
-        saveWateringToHistory(this->currentWattering);
-        
+        saveWateringToHistory(this->currentWattering);        
     }
     void Valvik::turnElectrovanneOff() {
-        if(!this->currentWattering.isRunning) {
+        if(!electrovanne.isOn()) {
             Serial.println("Valvik is NOT watering, cannot turn it off");
             return ;
         }
-        Serial.println("Turning electrovanne OFF");
-        digitalWrite(this->pinElectrovanne, LOW);
+        electrovanne.off();
         TIMESTAMP now = this->clock.now();
-        Serial.println("Electrovanne turned OFF at");
-        Serial.println(now);
         this->currentWattering.end = now;
-        this->currentWattering.isRunning = false;
 
         saveWateringToHistory(this->currentWattering);
     }
 
-    void Valvik::saveWateringToHistory(WATERING watering) {
-        //TODO sauvegarder sur le filesystem ?
-        
+    void Valvik::saveWateringToHistory(WATERING watering) {        
         Serial.println("Saving new watering history");
-        WATERING_HISTO * previousHisto =  &this->wateringHistories[this->historyIndex];
-
-        WATERING_HISTO * wateringHisto = new WATERING_HISTO(); // Pas réussi à le faire inline...
+        WATERING * wateringHisto = new WATERING(); // Pas réussi à le faire inline...
         wateringHisto->start = watering.start;
         wateringHisto->end = watering.end;
-        this->wateringHistories[this->historyIndex] = *wateringHisto;
 
         if(watering.end != 0) { // Si on sauvegarde l'état final, on change l'index pour la prochaine sauvegarde
-            //TODO: pourquoi ce delete plante ?
-            //delete previousHisto; // libère la mémoire de l'état en cours (dans le cas où on a sauvegardé l'état start uniquement)
             this->fileService.save(*wateringHisto);
             this->historyIndex++;
         }
     }
 
-    size_t Valvik::getHistory(WATERING_HISTO * &history) {
-        Serial.println((unsigned long) this->wateringHistories, HEX);
-        Serial.println("KLM IS A BITCH 1");
+    size_t Valvik::getHistory(WATERING * &history) {
         return this->fileService.getWateringHisto(history);
     }
 
-    void Valvik::setTime(unsigned long long int time) {
+    void Valvik::setTime(TIMESTAMP time) {
         // Si on a un décalage de moins de 5 minutes, on considère qu'on a la bonne heure
         if(time - clock.now() > 300000) {
+            Serial.print("Setting time to : ");
+            Serial.println(time);
             clock.setTime(time);
         } 
+        else {
+            Serial.println("Tried to set time but was already within 5 minutes of the registered one");
+        }
     }
 
-    long Valvik::getTime() {
+    TIMESTAMP Valvik::getTime() {
         return clock.now();
     }

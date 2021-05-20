@@ -2,26 +2,28 @@
 #include "Clock.h"
 #include "Data.h"
 #include "FileService.h"
+#include "Electrovanne.h"
+#include "MoistureSensor.h"
 #include "ccronexpr.h"
 
 class Valvik {
 
 public:
-    Valvik(uint8_t pinCapteurHudimite, uint8_t pinElectrovanne);
+    Valvik();
     bool isHumid();
     void turnElectrovanneOn();
     void turnElectrovanneOff();
     void setTime(TIMESTAMP time);
-    long getTime();
-    size_t getHistory(WATERING_HISTO * &history);
+    TIMESTAMP getTime();
+    size_t getHistory(WATERING * &history);
 
 private : 
-    uint8_t pinCapteurHumidite;
-    uint8_t pinElectrovanne;
+    SETTINGS settings;
+    MoistureSensor moistureSensor;
+    Electrovanne electrovanne;
     Clock clock;
-    WATERING currentWattering; // Etat courant de l'arrosage
-    WATERING_HISTO wateringHistories[31]; // Historique des arrosages
-    unsigned int historyIndex = 0; // index d'écriture de l'historique
+    WATERING currentWattering; // Etat de l'arrosage courant
+    unsigned int historyIndex; // index d'écriture de l'historique
     FileService fileService;
 
     void saveWateringToHistory(WATERING watering);

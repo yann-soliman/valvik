@@ -8,40 +8,77 @@ FileService::FileService() {
     }
 }
 
-void FileService::save(WATERING_HISTO & wateringHisto) {
-    File file = SPIFFS.open("/wateringHisto", "a+");
+void FileService::save(WATERING & wateringHisto) {
+    File file = SPIFFS.open("/watering_histo.dat", "a+");
     if(!file) {
-        Serial.println("Failed to open wateringHisto file");
+        Serial.println("Failed to open watering_histo.dat file");
         return;
     } else {
-        file.write((uint8_t *) &wateringHisto, sizeof(WATERING_HISTO));
+        file.write((uint8_t *) &wateringHisto, sizeof(WATERING));
         file.close();
     }
 }
 
-size_t FileService::getWateringHisto(WATERING_HISTO * &history) {
-    File file = SPIFFS.open("/wateringHisto", "r");
+void FileService::save(SETTINGS & settings) {
+    File file = SPIFFS.open("/settings.dat", "w");
     if(!file) {
-        Serial.println("Failed to open wateringHisto file");
+        Serial.println("Failed to open settings.dat file");
+        return;
+    } else {
+        file.write((uint8_t *) &settings, sizeof(SETTINGS));
+        file.close();
+    }
+}
+
+void FileService::save(TIMESTAMP time) {
+    File file = SPIFFS.open("/time.dat", "w");
+    if(!file) {
+        Serial.println("Failed to open time.dat file");
+        return;
+    } else {
+        file.write((uint8_t *) &time, sizeof(TIMESTAMP));
+        file.close();
+    }
+}
+
+size_t FileService::getWateringHisto(WATERING * &history) {
+    File file = SPIFFS.open("/watering_histo.dat", "r");
+    if(!file) {
+        Serial.println("Failed to open watering_histo.dat file");
         return 0;
     } else {
-        
-        Serial.print("wateringHisto size = ");
-        Serial.println(file.size());
-        Serial.print("nb histo");
-        size_t size = file.size() / sizeof(WATERING_HISTO);
-        Serial.println(size);
-        history = new WATERING_HISTO[size];
-        
-        Serial.println("about to read wateringHisto");
-        size_t sizeRead = file.read((uint8_t *) history, file.size());
-        Serial.print("Read wateringHisto with size : ");
-        Serial.println(sizeRead);
-
-        Serial.println("about to close file");
+        size_t size = file.size() / sizeof(WATERING);
+        history = new WATERING[size];
+        file.read((uint8_t *) history, file.size());
         file.close();
-        Serial.println("file closed");
         return size;
     }
     
+}
+
+SETTINGS FileService::getSettings() {
+    File file = SPIFFS.open("/settings.dat", "r");
+    if(!file) {
+        Serial.println("Failed to open settings.dat file");
+        SETTINGS settings; //TODO: empty settings ? NULL ?
+        return settings;
+    } else {
+        SETTINGS settings;
+        file.read((uint8_t *) &settings, sizeof(SETTINGS));
+        file.close();
+        return settings;
+    }
+}
+
+TIMESTAMP FileService::getTime() {
+    File file = SPIFFS.open("/time.dat", "r");
+    if(!file) {
+        Serial.println("Failed to open time.dat file");
+        return 0;
+    } else {
+        TIMESTAMP time;
+        file.read((uint8_t *) &time, sizeof(TIMESTAMP));
+        file.close();
+        return time;
+    }
 }

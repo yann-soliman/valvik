@@ -1,12 +1,15 @@
 #include <Arduino.h>
 #include "Data.h"
+#include "FileService.h"
 
 class Clock {
 public:
+    Clock();
     void setTime(TIMESTAMP time);
     TIMESTAMP now();
     void serialPrintHumanReadable();
 
 private:
-    TIMESTAMP time = 0; // un snapshot du timestamp de l'heure réelle (recalculé pour avoir le timestamp au boot de l'esp)
+    TIMESTAMP bootime = 0; // heure réelle de boot de l'esp
+    FileService fileService;
 };

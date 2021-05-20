@@ -2,20 +2,15 @@
 #include "Webserver.h"
 #include "Credentials.h" // non commité
 
-String header;
-
-const uint8_t CAPTEUR_HUMIDITE = 13;
-const uint8_t LED = BUILTIN_LED;
-
 WifiStation * wifiStation;
 Webserver * server;
 Valvik * valvik;
 
 void setup() {
   Serial.begin(115200);
-
+  
   wifiStation = new WifiStation(SSID, PASS_PHRASE);
-  valvik = new Valvik(CAPTEUR_HUMIDITE, LED);
+  valvik = new Valvik();
   server = new Webserver(valvik);
 }
 
@@ -28,3 +23,6 @@ void loop(){
 // * Statistiques
 // * Réglage plage horaire
 // * Réglage utilisation capteur ou pas
+// * endpoint reset stats/config
+// * favicon
+// * corriger décalage de 2h
