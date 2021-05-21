@@ -13,6 +13,8 @@ class Valvik {
 public:
     Valvik();
     bool isHumid();
+    bool isOn();
+    void toggleElectrovanne();
     void turnElectrovanneOn();
     void turnElectrovanneOff();
     void setTime(TIMESTAMP time);

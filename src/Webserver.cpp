@@ -43,9 +43,20 @@ void Webserver::initRoutes() {
     request->send(200, "text/plain", humidite);
   });
 
+  server->on("/valvik/status", HTTP_GET, [valvik](AsyncWebServerRequest *request)
+  {
+    bool status = valvik->isOn();
+    request->send(200, "text/plain", String(status));
+  });
+  
+  server->on("/valvik/toggle", HTTP_POST, [valvik](AsyncWebServerRequest *request)
+  {
+    valvik->toggleElectrovanne();
+    request->send(200);
+  });
+
   server->on("/valvik/on", HTTP_POST, [valvik](AsyncWebServerRequest *request)
   {
-        Serial.print("/valvik/on");
     valvik->turnElectrovanneOn();
     request->send(200);
   });

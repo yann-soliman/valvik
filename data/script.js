@@ -1,20 +1,31 @@
 // On profite du chargement du script pour mettre à jour l'heure du serveur
 refreshTime();
 
-function onButton() {
-    fetch('valvik/on', {method: "POST"})
-    .catch(e => console.log("Error while turning valvik on " + e));
+function getWateringStatus() {
+    fetch('valvik/status')
+    .then(response => response.text())
+    .then(wateringStatus => showWateringStatus(wateringStatus))
+    .catch(e => console.log("Error while getting valvik status " + e));
 }
 
-function offButton() {
-    fetch('valvik/off', {method: "POST"})
-    .catch(e => console.log("Error while turning valvik of " + e));
+function showWateringStatus(wateringStatus) {
+    document.getElementById("wateringStatus").checked = wateringStatus;
+}
+
+function toggleWatering() {
+    fetch('valvik/toggle', {method: "POST"})
+    .catch(e => console.log("Error while toggling valvik " + e));
 }
 
 function getHistory() {
     fetch("valvik/history")
     .then(response => response.json())
-    .then(data => {showStats(data); });
+    .then(data => showStats(data));
+}
+
+function resetHistory() {
+    fetch("valvik/history", {method: "DELETE"})
+    .catch(e => console.log("Error while resetting history " + e));
 }
 
 function getTime() {

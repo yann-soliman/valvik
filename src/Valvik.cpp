@@ -8,15 +8,27 @@
     bool Valvik::isHumid() {
         return moistureSensor.isHumid();
     }
+
+    bool Valvik::isOn() {
+        return electrovanne.isOn();
+    }
+
+    void Valvik::toggleElectrovanne() {
+        if(electrovanne.isOn()) {
+            this->turnElectrovanneOff();
+        }
+        else {
+            this->turnElectrovanneOn();
+        }
+    }    
+    
     void Valvik::turnElectrovanneOn() {
         if(electrovanne.isOn()) {
             Serial.println("Valvik is already watering");
             return ;
-        }
-        
-        TIMESTAMP now = this->clock.now();
+        }        
         electrovanne.on();
-        this->currentWattering.start = now;
+        this->currentWattering.start = this->clock.now();
         this->currentWattering.end = 0;       
     }
 
@@ -26,8 +38,7 @@
             return ;
         }
         electrovanne.off();
-        TIMESTAMP now = this->clock.now();
-        this->currentWattering.end = now;
+        this->currentWattering.end = this->clock.now();
 
         wateringHisto.saveWateringToHistory(this->currentWattering);
     }
