@@ -20,9 +20,5 @@ void loop(){
 //TODO LIST : 
 // * OTA
 // * DNS redirection index.html
-// * Statistiques
 // * Réglage plage horaire
-// * Réglage utilisation capteur ou pas
 // * endpoint reset stats/config
-// * favicon
-// * corriger décalage de 2h

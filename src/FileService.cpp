@@ -8,77 +8,45 @@ FileService::FileService() {
     }
 }
 
-void FileService::save(WATERING & wateringHisto) {
-    File file = SPIFFS.open("/watering_histo.dat", "a+");
+void FileService::save(const char * filePath, uint8_t * fileContent, size_t size) {
+    File file = SPIFFS.open(filePath, "w");
     if(!file) {
-        Serial.println("Failed to open watering_histo.dat file");
+        Serial.print("Failed to open");
+        Serial.println(filePath);
         return;
     } else {
-        file.write((uint8_t *) &wateringHisto, sizeof(WATERING));
+        file.write(fileContent, size);
         file.close();
     }
 }
 
-void FileService::save(SETTINGS & settings) {
-    File file = SPIFFS.open("/settings.dat", "w");
+void FileService::add(const char * filePath, uint8_t * content, size_t size) {
+    File file = SPIFFS.open(filePath, "a+");
     if(!file) {
-        Serial.println("Failed to open settings.dat file");
+        Serial.print("Failed to open");
+        Serial.println(filePath);
         return;
     } else {
-        file.write((uint8_t *) &settings, sizeof(SETTINGS));
+        file.write(content, size);
         file.close();
     }
 }
 
-void FileService::save(TIMESTAMP time) {
-    File file = SPIFFS.open("/time.dat", "w");
+size_t FileService::get(const char * filePath, uint8_t * &fileContent) {
+    File file = SPIFFS.open(filePath, "r");
     if(!file) {
-        Serial.println("Failed to open time.dat file");
-        return;
-    } else {
-        file.write((uint8_t *) &time, sizeof(TIMESTAMP));
-        file.close();
-    }
-}
-
-size_t FileService::getWateringHisto(WATERING * &history) {
-    File file = SPIFFS.open("/watering_histo.dat", "r");
-    if(!file) {
-        Serial.println("Failed to open watering_histo.dat file");
+        Serial.print("Failed to open");
+        Serial.println(filePath);
         return 0;
     } else {
-        size_t size = file.size() / sizeof(WATERING);
-        history = new WATERING[size];
-        file.read((uint8_t *) history, file.size());
+        fileContent = new uint8_t[file.size()];
+        size_t size = file.read(fileContent, file.size());
         file.close();
         return size;
     }
     
 }
 
-SETTINGS FileService::getSettings() {
-    File file = SPIFFS.open("/settings.dat", "r");
-    if(!file) {
-        Serial.println("Failed to open settings.dat file");
-        SETTINGS settings; //TODO: empty settings ? NULL ?
-        return settings;
-    } else {
-        SETTINGS settings;
-        file.read((uint8_t *) &settings, sizeof(SETTINGS));
-        file.close();
-        return settings;
-    }
-}
-
-TIMESTAMP FileService::getTime() {
-    File file = SPIFFS.open("/time.dat", "r");
-    if(!file) {
-        Serial.println("Failed to open time.dat file");
-        return 0;
-    } else {
-        TIMESTAMP time;
-        file.read((uint8_t *) &time, sizeof(TIMESTAMP));
-        file.close();
-        return time;
-    }
+void FileService::remove(const char * filePath) {
+    SPIFFS.remove(filePath);
 }

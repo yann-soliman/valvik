@@ -2,6 +2,8 @@
 #include "Data.h"
 #include "FileService.h"
 
+#define CLOCK_FILE_PATH "/timestamp.dat"
+
 class Clock {
 public:
     Clock();

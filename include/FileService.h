@@ -3,17 +3,14 @@
 
 #include <Arduino.h>
 #include "SPIFFS.h"
-#include "Data.h"
 
-class FileService {
+class FileService { //TODO cette classe ne devrait être instanciée qu'une fois... namespace pour ça ?
 public:    
     FileService();
-    void save(WATERING & wateringHisto);
-    void save(SETTINGS & settings);
-    void save(TIMESTAMP timestamp);
-    size_t getWateringHisto(WATERING * &history);
-    SETTINGS getSettings();
-    TIMESTAMP getTime();
+    void save(const char * filePath, uint8_t * fileContent, size_t size);
+    void add(const char * filePath, uint8_t * content, size_t size);
+    size_t get(const char * filePath, uint8_t * &fileContent);
+    void remove(const char * filePath);
 };
 
 #endif

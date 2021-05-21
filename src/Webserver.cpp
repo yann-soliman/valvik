@@ -68,27 +68,51 @@ void Webserver::initRoutes() {
   server->on("/time", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
     char buffer [sizeof(TIMESTAMP)*8+1];
-    ultoa (valvik->getTime(),buffer,10);
+    ultoa (valvik->getClock().now(),buffer,10);
     request->send(200, "text/plain", buffer);
   });
 
   server->on("/settings", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
-    TIMESTAMP timestamp = valvik->getTime();
+    TIMESTAMP timestamp = valvik->getClock().now();
+    Serial.print("Getting time settings ");
+    Serial.println(timestamp);
+    Settings& settings = valvik->getSettings();
+    Serial.print("Settings instance : ");
+    Serial.println((int) &settings, HEX);
     DynamicJsonBuffer jsonBuffer; 
     JsonObject &root = jsonBuffer.createObject();
     root["timestamp"] = timestamp;
+    root["shouldUseHumiditySensor"] = settings.shouldUseHumiditySensor();
+    root["shouldUseProgrammableWatering"] = settings.shouldUseProgrammableWatering();
 
     root.printTo(*response);
 
     request->send(response);
   });
 
+  server->on("/settings/sensor/humidity/toggle", HTTP_PUT, [valvik](AsyncWebServerRequest *request)
+  {
+      Settings &ptr = valvik->getSettings();
+      Serial.print("Settings instance : ");
+      Serial.println((int) &ptr, HEX);
+      valvik->getSettings().toggleHumiditySensor();
+      request->send(200);
+  });
+
+  server->on("/settings/programmable-watering/toggle", HTTP_PUT, [valvik](AsyncWebServerRequest *request)
+  {
+      valvik->getSettings().toggleProgrammableWatering();
+      request->send(200);
+  });
+
   server->on("/valvik/history", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
     WATERING * history = NULL;
-    int size = valvik->getHistory(history);
+    size_t size = valvik->getWateringHisto().getHistory(history);
+    Serial.print("History size : ");
+    Serial.println(size);
     AsyncResponseStream *response = request->beginResponseStream("application/json");
 
     DynamicJsonBuffer jsonBuffer; 
@@ -104,6 +128,12 @@ void Webserver::initRoutes() {
 
     request->send(response);
     delete[] history;
+  });
+
+  server->on("/valvik/history", HTTP_DELETE, [valvik](AsyncWebServerRequest *request)
+  {
+      valvik->getWateringHisto().reset();
+      request->send(200);
   });
 
   server->serveStatic("/", SPIFFS, "/");

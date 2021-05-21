@@ -1,6 +1,5 @@
 // On profite du chargement du script pour mettre à jour l'heure du serveur
-fetch('time', {method: "PUT", body: Date.now()})
-    .catch(e => console.log("Error while setting up time " + e));
+refreshTime();
 
 function onButton() {
     fetch('valvik/on', {method: "POST"})
@@ -16,6 +15,19 @@ function getHistory() {
     fetch("valvik/history")
     .then(response => response.json())
     .then(data => {showStats(data); });
+}
+
+function getTime() {
+    fetch("time")
+    .then(response => response.json())
+    .then(data => {showStats(data); });
+}
+
+function refreshTime() {
+    const timestamp = Date.now();
+    fetch('time', {method: "PUT", body: timestamp})
+    .then(_ => showTime(timestamp))
+    .catch(e => console.log("Error while setting up time " + e));
 }
 
 var chart;
@@ -57,11 +69,28 @@ function showStats(histo) {
 function getSettings() {
     fetch("settings")
     .then(response => response.json())
-    .then(data => {showSettings(data); });
+    .then(data => {refreshSettings(data); });
 }
 
-function showSettings(settings) {
-    document.getElementById('timestamp').innerText = new Date(settings.timestamp).toLocaleString();
+function refreshSettings(settings) {
+    showTime(settings.timestamp);
+    document.getElementById("humiditySensorCheckBox").checked = settings.shouldUseHumiditySensor ;
+    document.getElementById("programmableWateringCheckbox").checked = settings.shouldUseProgrammableWatering ;
+}
+
+function showTime(timestamp) {
+    const date = new Date(timestamp);
+    document.getElementById('timestamp').innerText = date.toLocaleDateString() + " " + date.toLocaleTimeString();
+}
+
+function toggleHumiditySensor() {
+    fetch("settings/sensor/humidity/toggle", {method: "PUT"})
+    .catch(e => console.log("Error while toggling humidity sensor " + e));
+}
+
+function toggleProgrammableWatering() {
+    fetch("settings/programmable-watering/toggle", {method: "PUT"})
+    .catch(e => console.log("Error while toggling programmable watering " + e));
 }
 
 function openTab(tabId) {

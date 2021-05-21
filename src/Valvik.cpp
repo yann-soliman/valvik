@@ -3,8 +3,6 @@
     Valvik::Valvik() {    
         currentWattering.start = 0;
         currentWattering.end = 0;
-        historyIndex = 0;
-        settings = fileService.getSettings();
     }
 
     bool Valvik::isHumid() {
@@ -19,10 +17,9 @@
         TIMESTAMP now = this->clock.now();
         electrovanne.on();
         this->currentWattering.start = now;
-        this->currentWattering.end = 0;
-
-        saveWateringToHistory(this->currentWattering);        
+        this->currentWattering.end = 0;       
     }
+
     void Valvik::turnElectrovanneOff() {
         if(!electrovanne.isOn()) {
             Serial.println("Valvik is NOT watering, cannot turn it off");
@@ -32,23 +29,7 @@
         TIMESTAMP now = this->clock.now();
         this->currentWattering.end = now;
 
-        saveWateringToHistory(this->currentWattering);
-    }
-
-    void Valvik::saveWateringToHistory(WATERING watering) {        
-        Serial.println("Saving new watering history");
-        WATERING * wateringHisto = new WATERING(); // Pas réussi à le faire inline...
-        wateringHisto->start = watering.start;
-        wateringHisto->end = watering.end;
-
-        if(watering.end != 0) { // Si on sauvegarde l'état final, on change l'index pour la prochaine sauvegarde
-            this->fileService.save(*wateringHisto);
-            this->historyIndex++;
-        }
-    }
-
-    size_t Valvik::getHistory(WATERING * &history) {
-        return this->fileService.getWateringHisto(history);
+        wateringHisto.saveWateringToHistory(this->currentWattering);
     }
 
     void Valvik::setTime(TIMESTAMP time) {
@@ -63,6 +44,16 @@
         }
     }
 
-    TIMESTAMP Valvik::getTime() {
-        return clock.now();
+    Clock& Valvik::getClock() {
+        return clock;
+    }
+
+    Settings& Valvik::getSettings() {
+        Serial.print("Getting settings, shouldUseHumiditySensor : ");
+        Serial.println(settings.shouldUseHumiditySensor());
+        return settings;
+    }
+
+    WateringHisto& Valvik::getWateringHisto() {
+        return wateringHisto;
     }

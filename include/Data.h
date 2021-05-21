@@ -8,8 +8,7 @@ typedef struct {
 } WATERING;
 
 typedef struct {
-    bool isStarted = true;
-    bool shouldUseSensor = true;
+    bool shouldUseHumiditySensor = true;
     bool shouldUseProgrammableWatering = false;
     //cron_expr programmableWateringCron;
 } SETTINGS;
