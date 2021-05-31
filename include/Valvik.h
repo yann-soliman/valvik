@@ -12,7 +12,6 @@ class Valvik {
 
 public:
     Valvik();
-    bool isHumid();
     bool isOn();
     void toggleElectrovanne();
     void turnElectrovanneOn();
@@ -21,6 +20,7 @@ public:
     Clock& getClock();
     Settings& getSettings();
     WateringHisto& getWateringHisto();
+    MoistureSensor& getMoistureSensor();
 
 
 private : 

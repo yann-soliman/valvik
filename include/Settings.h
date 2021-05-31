@@ -16,6 +16,7 @@ public:
     void toggleProgrammableWatering();
     bool shouldUseHumiditySensor();
     bool shouldUseProgrammableWatering();
+    int getHumiditySensorThreshold();
     void reset();
 
 private:

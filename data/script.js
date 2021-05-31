@@ -1,31 +1,55 @@
 // On profite du chargement du script pour mettre à jour l'heure du serveur
 refreshTime();
 
-function getWateringStatus() {
-    fetch('valvik/status')
-    .then(response => response.text())
-    .then(wateringStatus => showWateringStatus(wateringStatus))
-    .catch(e => console.log("Error while getting valvik status " + e));
+
+function showManual() {
+    getWateringState();
+    getMoistureSensorState();    
 }
 
-function showWateringStatus(wateringStatus) {
-    document.getElementById("wateringStatus").checked = wateringStatus;
+function getWateringState() {
+    fetch('valvik/state')
+    .then(response => response.text())
+    .then(wateringState => showWateringState(parseInt(wateringState)))
+    .catch(e => showError("Error while getting valvik status " + e));
+}
+
+function showWateringState(wateringState) {
+    document.getElementById("watering-state").checked = wateringState;
+}
+
+function getMoistureSensorState() {
+    fetch("sensor/moisture/state")
+    .then(response => response.text())
+    .then(moistureState => showMoistureSensor(parseInt(moistureState)))
+    .catch(e => showError("Error while getting valvik status " + e));
+}
+
+function showMoistureSensor(moistureState) {
+    const moistureStateElement = document.getElementById("moisture-state");
+    if(moistureState) {
+        moistureStateElement.src = "cactus.png";
+    }
+    else {
+        moistureStateElement.src = "plant.png";
+    }
 }
 
 function toggleWatering() {
     fetch('valvik/toggle', {method: "POST"})
-    .catch(e => console.log("Error while toggling valvik " + e));
+    .catch(e => showError("Error while toggling valvik " + e));
 }
 
 function getHistory() {
     fetch("valvik/history")
     .then(response => response.json())
-    .then(data => showStats(data));
+    .then(data => showStats(data))
+    .catch(e => showError("Error while toggling valvik " + e));
 }
 
 function resetHistory() {
     fetch("valvik/history", {method: "DELETE"})
-    .catch(e => console.log("Error while resetting history " + e));
+    .catch(e => showError("Error while resetting history " + e));
 }
 
 function getTime() {
@@ -38,7 +62,7 @@ function refreshTime() {
     const timestamp = Date.now();
     fetch('time', {method: "PUT", body: timestamp})
     .then(_ => showTime(timestamp))
-    .catch(e => console.log("Error while setting up time " + e));
+    .catch(e => showError("Error while setting up time " + e));
 }
 
 var chart;
@@ -54,7 +78,6 @@ function showStats(histo) {
         return [data1, data2, data3, data4];
     });
 
-    console.log("chart = " + chart);
     if(chart == undefined) {
         const data = {
             datasets: [{
@@ -85,8 +108,10 @@ function getSettings() {
 
 function refreshSettings(settings) {
     showTime(settings.timestamp);
-    document.getElementById("humiditySensorCheckBox").checked = settings.shouldUseHumiditySensor ;
-    document.getElementById("programmableWateringCheckbox").checked = settings.shouldUseProgrammableWatering ;
+    document.getElementById("humidity-sensor-checkBox").checked = settings.shouldUseHumiditySensor ;
+    document.getElementById("programmable-watering-checkbox").checked = settings.shouldUseProgrammableWatering ;
+    document.getElementById("current-humidity-sensor-percentage").innerHTML = settings.currentHumiditySensorPercentage;
+    document.getElementById("humidity-sensor-range").value = settings.humiditySensorThreshold;
 }
 
 function showTime(timestamp) {
@@ -96,12 +121,22 @@ function showTime(timestamp) {
 
 function toggleHumiditySensor() {
     fetch("settings/sensor/humidity/toggle", {method: "PUT"})
-    .catch(e => console.log("Error while toggling humidity sensor " + e));
+    .catch(e => showError("Error while toggling humidity sensor " + e));
 }
 
 function toggleProgrammableWatering() {
     fetch("settings/programmable-watering/toggle", {method: "PUT"})
-    .catch(e => console.log("Error while toggling programmable watering " + e));
+    .catch(e => showError("Error while toggling programmable watering " + e));
+}
+
+var updateHumiditySensorThresholdTimeout;
+function updateHumiditySensorThreshold() {
+    document.getElementById("humidity-sensor-threshold").innerHTML = document.getElementById("humidity-sensor-range").value;
+    clearTimeout(updateHumiditySensorThresholdTimeout);
+    updateHumiditySensorThresholdTimeout = setTimeout(
+        () => fetch("settings/sensor/humidity/percentage", {method: "PUT"})
+        .catch(e => showError("Error while settings humidity sensor percentage" + e))
+        , 500);
 }
 
 function openTab(tabId) {
@@ -113,3 +148,7 @@ function openTab(tabId) {
     document.getElementById(tabId).style.display = "block";
 }
 
+function showError(error) {
+    document.getElementById("text-error").innerText = error;
+    document.getElementById('error-modal').style.display="block";
+}

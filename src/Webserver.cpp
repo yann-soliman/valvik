@@ -36,11 +36,16 @@ void Webserver::initRoutes() {
     request->send(SPIFFS, "/index.html", "text/html");
   });
 
-  server->on("/moisture-sensor", HTTP_GET, [valvik](AsyncWebServerRequest *request)
+  server->on("sensor/moisture/status", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
-    int val = valvik->isHumid();
-    String humidite = String(val);
-    request->send(200, "text/plain", humidite);
+    bool isHumid = valvik->getMoistureSensor().isHumid();
+    request->send(200, "text/plain", String(isHumid));
+  });
+
+  server->on("sensor/moisture/percentage", HTTP_GET, [valvik](AsyncWebServerRequest *request)
+  {
+    int value = valvik->getMoistureSensor().getPercentage();
+    request->send(200, "text/plain", String(value));
   });
 
   server->on("/valvik/status", HTTP_GET, [valvik](AsyncWebServerRequest *request)
@@ -97,6 +102,8 @@ void Webserver::initRoutes() {
     root["timestamp"] = timestamp;
     root["shouldUseHumiditySensor"] = settings.shouldUseHumiditySensor();
     root["shouldUseProgrammableWatering"] = settings.shouldUseProgrammableWatering();
+    root["humiditySensorThreshold"] = settings.getHumiditySensorThreshold();
+    root["currentHumiditySensorPercentage"] = valvik->getMoistureSensor().getPercentage();
 
     root.printTo(*response);
 

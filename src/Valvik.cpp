@@ -5,10 +5,6 @@
         currentWattering.end = 0;
     }
 
-    bool Valvik::isHumid() {
-        return moistureSensor.isHumid();
-    }
-
     bool Valvik::isOn() {
         return electrovanne.isOn();
     }
@@ -67,4 +63,8 @@
 
     WateringHisto& Valvik::getWateringHisto() {
         return wateringHisto;
+    }
+
+    MoistureSensor& Valvik::getMoistureSensor() {
+        return moistureSensor;
     }

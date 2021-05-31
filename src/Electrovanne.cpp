@@ -1,7 +1,5 @@
 #include "Electrovanne.h"
 
-#define PIN 3
-
 Electrovanne::Electrovanne() {    
     pinMode(PIN, OUTPUT);
     digitalWrite(PIN, LOW);

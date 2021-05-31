@@ -24,3 +24,7 @@ bool Settings::shouldUseHumiditySensor() {
 bool Settings::shouldUseProgrammableWatering() {
     return settings.shouldUseProgrammableWatering;
 }
+
+int Settings::getHumiditySensorThreshold(){
+    return settings.humiditySensorThreshold;
+}

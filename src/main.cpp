@@ -8,7 +8,7 @@
 WifiStation * wifiStation;
 Webserver * server;
 Valvik * valvik;
-DNSServer dnsServer;
+//DNSServer dnsServer;
 
 void setup() {
   Serial.begin(115200);
@@ -23,12 +23,16 @@ void setup() {
 }
 
 void loop(){
+  
   //dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   //dnsServer.processNextRequest();
 }
 
 //TODO LIST : 
 // * OTA
-// * DNS redirection index.html
 // * Réglage plage horaire
-// * endpoint reset stats/config
+// * deep sleep strategy
+// * fix bug watering
+// * websocket récupération état capteur
+// * Serial over Wifi ?
+// * Activation X minutes
