@@ -25,12 +25,11 @@ public:
 
 
 private : 
-    MoistureSensor moistureSensor;
     Electrovanne electrovanne;
+    MoistureSensor moistureSensor;
     Clock clock;
     WATERING currentWattering; // Etat de l'arrosage courant
     FileService fileService;
     Settings settings;
     WateringHisto wateringHisto;
-    hw_timer_t * timer;
 };

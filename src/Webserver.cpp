@@ -56,13 +56,13 @@ void Webserver::initRoutes() {
   
   server->on("/valvik/toggle", HTTP_POST, [](AsyncWebServerRequest * request){}, NULL, [valvik](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
 
-    DynamicJsonBuffer jsonBuffer;
+    StaticJsonBuffer<200> jsonBuffer;
     JsonObject& root = jsonBuffer.parseObject((const char*)data);
     int minutes = 10;
     int seconds = 0;
     if (root.success()) {
-      minutes = atoi(root["minutes"].asString());
-      seconds = atoi(root["seconds"].asString());
+      minutes = root["minutes"];
+      seconds = root["seconds"];
     }
     valvik->toggleElectrovanne(minutes, seconds);
     request->send(200);
