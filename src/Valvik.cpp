@@ -3,32 +3,40 @@
     Valvik::Valvik() {    
         currentWattering.start = 0;
         currentWattering.end = 0;
+        timer = timerBegin(0, 80, true);
     }
 
     bool Valvik::isOn() {
         return electrovanne.isOn();
     }
 
-    void Valvik::toggleElectrovanne() {
+    void Valvik::toggleElectrovanne(int minutes, int seconds) {
         if(electrovanne.isOn()) {
             this->turnElectrovanneOff();
         }
         else {
-            this->turnElectrovanneOn();
+            this->turnElectrovanneOn(minutes, seconds);
         }
     }    
     
-    void Valvik::turnElectrovanneOn() {
+    void Valvik::turnElectrovanneOn(int minutes, int seconds) {
         if(electrovanne.isOn()) {
             Serial.println("Valvik is already watering");
             return ;
         }        
         electrovanne.on();
         this->currentWattering.start = this->clock.now();
-        this->currentWattering.end = 0;       
+        this->currentWattering.end = 0;   
+        
+        timerAttachInterrupt(timer, (void (*)()) &turnElectrovanneOff, true);
+        timerAlarmWrite(timer, 5000000, false);
+        delay(1000);
+        //timerRestart(timer);
+        timerAlarmEnable(timer);    
     }
 
-    void Valvik::turnElectrovanneOff() {
+    void IRAM_ATTR Valvik::turnElectrovanneOff() {
+        Serial.println("test off");
         if(!electrovanne.isOn()) {
             Serial.println("Valvik is NOT watering, cannot turn it off");
             return ;

@@ -13,9 +13,9 @@ class Valvik {
 public:
     Valvik();
     bool isOn();
-    void toggleElectrovanne();
-    void turnElectrovanneOn();
-    void turnElectrovanneOff();
+    void toggleElectrovanne(int minutes, int seconds);
+    void turnElectrovanneOn(int minutes, int seconds);
+    void IRAM_ATTR turnElectrovanneOff();
     void setTime(TIMESTAMP time);
     void setMoistureSensorThreshold(int threshold);
     Clock& getClock();
@@ -32,4 +32,5 @@ private :
     FileService fileService;
     Settings settings;
     WateringHisto wateringHisto;
+    hw_timer_t * timer;
 };

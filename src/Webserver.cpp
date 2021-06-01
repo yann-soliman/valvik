@@ -54,21 +54,17 @@ void Webserver::initRoutes() {
     request->send(200, "text/plain", String(state));
   });
   
-  server->on("/valvik/toggle", HTTP_POST, [valvik](AsyncWebServerRequest *request)
-  {
-    valvik->toggleElectrovanne();
-    request->send(200);
-  });
+  server->on("/valvik/toggle", HTTP_POST, [](AsyncWebServerRequest * request){}, NULL, [valvik](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
 
-  server->on("/valvik/on", HTTP_POST, [valvik](AsyncWebServerRequest *request)
-  {
-    valvik->turnElectrovanneOn();
-    request->send(200);
-  });
-
-  server->on("/valvik/off", HTTP_POST, [valvik](AsyncWebServerRequest *request)
-  {
-    valvik->turnElectrovanneOff();
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject& root = jsonBuffer.parseObject((const char*)data);
+    int minutes = 10;
+    int seconds = 0;
+    if (root.success()) {
+      minutes = atoi(root["minutes"].asString());
+      seconds = atoi(root["seconds"].asString());
+    }
+    valvik->toggleElectrovanne(minutes, seconds);
     request->send(200);
   });
 

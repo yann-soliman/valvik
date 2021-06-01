@@ -36,7 +36,9 @@ function showMoistureSensor(moistureState) {
 }
 
 function toggleWatering() {
-    fetch('valvik/toggle', {method: "POST"})
+    const minutes = parseInt(document.getElementById("manual-watering-minutes").value);
+    const seconds = parseInt(document.getElementById("manual-watering-seconds").value);
+    fetch('valvik/toggle', {method: "POST", body: JSON.stringify({"minutes": minutes, "seconds": seconds})})
     .catch(e => showError("Error while toggling valvik " + e));
 }
 

@@ -29,57 +29,77 @@
     
     <div style="margin-left:70px">
         
-        <div id="manual" class="tab w3-animate-opacity w3-margin w3-center w3-padding-24">
-            <div class="w3-card  w3-padding w3-margin-bottom">
-                <h3 class="w3-padding">Contrôle manuel de la vanne</h3>
-                <label class="switch" onchange="toggleWatering()">
-                    <input id="watering-state" type="checkbox">
-                    <span class="checkbox round"></span>
-                </label>
+        <div id="manual" class="tab w3-animate-opacity w3-margin w3-center">
+            <div class="w3-card w3-padding w3-margin-bottom w3-container">
+                <div class="w3-cell-row w3-padding-16">
+                    <h3 class="w3-cell ">Arrosage manuel</h3><h6 class="w3-cell">(10 min par défaut)</h6>
+                </div>
+                <div class="row">
+                    <div class="w3-col s8 m8 l9">
+                        <input type="number" id="manual-watering-minutes" min="0" max="59"> min
+                        <input type="number" id="manual-watering-seconds" min="0" max="59"> sec
+                    </div>
+                    
+                    <div class="w3-col s4 m4 l3">
+                        <label class="switch" onchange="toggleWatering()">
+                            <input id="watering-state" type="checkbox">
+                            <span class="checkbox round"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
             
             <div class="w3-card  w3-padding w3-margin-bottom">
-                <h3 class="w3-padding">Capteur d'humidité</h3>
+                <h3 class="w3-padding">Humidité actuelle</h3>
                 <img id="moisture-state" src="plant.png">
             </div>
 
         </div>
         
-        <div id="time" class="tab w3-animate-opacity w3-margin w3-center w3-card w3-padding-24" style="display:none">
+        <div id="time" class="tab w3-animate-opacity w3-margin w3-center w3-card" style="display:none">
         </div>
         
-        <div id="stats" class="tab w3-animate-opacity w3-margin w3-center w3-card w3-padding-24" style="display:none">
+        <div id="stats" class="tab w3-animate-opacity w3-margin w3-center w3-card" style="display:none">
             <canvas id="arrosage" width="600" height="400"></canvas>            
         </div>
         
-        <div id="settings" class="tab w3-animate-opacity w3-margin w3-center w3-padding-24" style="display:none">
+        <div id="settings" class="tab w3-animate-opacity w3-margin w3-center" style="display:none">
             <div class="w3-card w3-padding w3-margin-bottom">
                 <h4 class="w3-padding">Date et heure</h4>
-                <span id="timestamp">test</span><i onclick="refreshTime()" style="padding-left:1em" class="fas fa-sync-alt"></i>
+                <span id="timestamp"></span><i onclick="refreshTime()" style="padding-left:1em" class="fas fa-sync-alt"></i>
             </div>
             <div class="w3-card w3-padding w3-margin-bottom" >
-                <h4 class="w3-col s8 m8 l9" style="vertical-align: middle;">Arrosage automatique</h4>
-                <span class="w3-col s4 m4 l3">
-                    <label class="switch" onchange="toggleMoistureSensor()">
-                        <input id="moisture-sensor-checkbox" type="checkbox">
-                        <span class="checkbox round"></span>
-                    </label>
-                </span>
-                <div class="w3-row w3-padding-16">
-                    <span class="w3-col s8 m8 l9">% humidité actuelle</span>                
-                    <span id="current-moisture-sensor-percentage" class="w3-col s4 m4 l3">0</span>
+                <div class="w3-cell-row w3-padding-16">
+                    <h4 class="w3-cell s8 m8 l9">Arrosage automatique</h4>
+                    <span class="w3-cell s4 m4 l3 w3-cell-middle">
+                        <label class="switch" onchange="toggleMoistureSensor()">
+                            <input id="moisture-sensor-checkbox" type="checkbox">
+                            <span class="checkbox round"></span>
+                        </label>
+                    </span>
                 </div>
                 <div class="w3-row w3-padding-16">
-                    <span class="w3-col s6 m6 l7">% de déclenchement</span>
-                    <input type="range" min="0" max="100" class="slider w3-col s4 m4 l3" id="moisture-sensor-threshold-range" onchange="updateMoistureSensorThreshold()">
-                    <span class="w3-col s2 m2 l2" id="moisture-sensor-threshold-value"></span>
+                    <div class="w3-col s10 m10 l10 w3-row">
+                        <span class="w3-col s8 m8 l9">humidité actuelle</span>
+                    </div>              
+                    <div class="w3-col s2 m2 l2">
+                        <span id="current-moisture-sensor-percentage">0</span>%
+                    </div>
+                </div>
+                <div class="w3-row w3-padding-16">
+                    <div class="w3-col s6 m6 l7">seuil</div>
+                    <div class="w3-col s4 m4 l3">
+                        <input type="range" min="0" max="100" class="slider" id="moisture-sensor-threshold-range" oninput="updateMoistureSensorThreshold()">
+                    </div>                    
+                    <div class="w3-col s2 m2 l2">
+                        <span id="moisture-sensor-threshold-value"></span>%
+                    </div>
                 </div>
             </div>
             <div class="w3-card w3-padding w3-margin-bottom">
-                <h4 class="">Arrosage programmable</h4>
-                <div class="w3-row w3-padding-16">
-                    <span class="w3-col s8 m8 l9">Activé</span>
-                    <span class="w3-col s4 m4 l3">
+                <div class="w3-cell-row w3-padding-16">
+                    <h4 class="w3-cell s8 m8 l9">Arrosage programmable</h4>
+                    <span class="w3-cell s4 m4 l3 w3-cell-middle">
                         <label class="switch" onchange="toggleProgrammableWatering()">
                             <input id="programmable-watering-checkbox" type="checkbox">
                             <span class="checkbox round"></span>
@@ -88,8 +108,8 @@
                 </div>
             </div>
             <div class="w3-card w3-padding w3-margin-bottom">
-                <h4 class="w3-padding">Reset historique</h4>
-                <button onclick="resetHistory()" class="w3-button w3-round-xxlarge w3-green w3-xlarge w3-ripple w3-wide">RESET</button>
+                <h4 class="w3-padding">Historique</h4>
+                <button onclick="resetHistory()" class="w3-button w3-round-xlarge w3-green w3-xlarge w3-ripple w3-wide">RESET</button>
             </div>
         </div>
         
