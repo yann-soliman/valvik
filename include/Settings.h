@@ -12,11 +12,12 @@ public:
 
     Settings();
 
-    void toggleHumiditySensor();
+    void toggleMoistureSensor();
     void toggleProgrammableWatering();
-    bool shouldUseHumiditySensor();
+    void setMoistureSensorThreshold(int threshold);
+    bool shouldUseMoistureSensor();
     bool shouldUseProgrammableWatering();
-    int getHumiditySensorThreshold();
+    int getMoistureSensorThreshold();
     void reset();
 
 private:

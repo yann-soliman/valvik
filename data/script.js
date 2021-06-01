@@ -27,7 +27,7 @@ function getMoistureSensorState() {
 
 function showMoistureSensor(moistureState) {
     const moistureStateElement = document.getElementById("moisture-state");
-    if(moistureState) {
+    if(!moistureState) {
         moistureStateElement.src = "cactus.png";
     }
     else {
@@ -108,10 +108,11 @@ function getSettings() {
 
 function refreshSettings(settings) {
     showTime(settings.timestamp);
-    document.getElementById("humidity-sensor-checkBox").checked = settings.shouldUseHumiditySensor ;
+    document.getElementById("moisture-sensor-checkbox").checked = settings.shouldUseMoistureSensor ;
     document.getElementById("programmable-watering-checkbox").checked = settings.shouldUseProgrammableWatering ;
-    document.getElementById("current-humidity-sensor-percentage").innerHTML = settings.currentHumiditySensorPercentage;
-    document.getElementById("humidity-sensor-range").value = settings.humiditySensorThreshold;
+    document.getElementById("current-moisture-sensor-percentage").innerHTML = settings.currentMoistureSensorPercentage;
+    document.getElementById("moisture-sensor-threshold-range").value = settings.moistureSensorThreshold;
+    document.getElementById("moisture-sensor-threshold-value").innerHTML = settings.moistureSensorThreshold;
 }
 
 function showTime(timestamp) {
@@ -119,9 +120,9 @@ function showTime(timestamp) {
     document.getElementById('timestamp').innerText = date.toLocaleDateString() + " " + date.toLocaleTimeString();
 }
 
-function toggleHumiditySensor() {
-    fetch("settings/sensor/humidity/toggle", {method: "PUT"})
-    .catch(e => showError("Error while toggling humidity sensor " + e));
+function toggleMoistureSensor() {
+    fetch("settings/sensor/moisture/toggle", {method: "PUT"})
+    .catch(e => showError("Error while toggling moisture sensor " + e));
 }
 
 function toggleProgrammableWatering() {
@@ -129,13 +130,14 @@ function toggleProgrammableWatering() {
     .catch(e => showError("Error while toggling programmable watering " + e));
 }
 
-var updateHumiditySensorThresholdTimeout;
-function updateHumiditySensorThreshold() {
-    document.getElementById("humidity-sensor-threshold").innerHTML = document.getElementById("humidity-sensor-range").value;
-    clearTimeout(updateHumiditySensorThresholdTimeout);
-    updateHumiditySensorThresholdTimeout = setTimeout(
-        () => fetch("settings/sensor/humidity/percentage", {method: "PUT"})
-        .catch(e => showError("Error while settings humidity sensor percentage" + e))
+var updateMoistureSensorThresholdTimeout;
+function updateMoistureSensorThreshold() {
+    const threshold = document.getElementById("moisture-sensor-threshold-range").value;
+    document.getElementById("moisture-sensor-threshold-value").innerHTML = threshold;
+    clearTimeout(updateMoistureSensorThresholdTimeout);
+    updateMoistureSensorThresholdTimeout = setTimeout(
+        () => fetch("settings/sensor/moisture/threshold", {method: "PUT", body: threshold})
+        .catch(e => showError("Error while settings moisture sensor percentage" + e))
         , 500);
 }
 

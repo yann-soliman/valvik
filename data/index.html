@@ -57,25 +57,22 @@
                 <h4 class="w3-padding">Date et heure</h4>
                 <span id="timestamp">test</span><i onclick="refreshTime()" style="padding-left:1em" class="fas fa-sync-alt"></i>
             </div>
-            <div class="w3-card w3-padding w3-margin-bottom">
-                <h4 class="">Arrosage automatique</h4>
+            <div class="w3-card w3-padding w3-margin-bottom" >
+                <h4 class="w3-col s8 m8 l9" style="vertical-align: middle;">Arrosage automatique</h4>
+                <span class="w3-col s4 m4 l3">
+                    <label class="switch" onchange="toggleMoistureSensor()">
+                        <input id="moisture-sensor-checkbox" type="checkbox">
+                        <span class="checkbox round"></span>
+                    </label>
+                </span>
                 <div class="w3-row w3-padding-16">
-                    <span class="w3-col s8 m8 l9">Activé</span>                
-                    <span class="w3-col s4 m4 l3">
-                        <label class="switch" onchange="toggleHumiditySensor()">
-                            <input id="humidit-sensor-checkBox" type="checkbox">
-                            <span class="checkbox round"></span>
-                        </label>
-                        </span>
+                    <span class="w3-col s8 m8 l9">% humidité actuelle</span>                
+                    <span id="current-moisture-sensor-percentage" class="w3-col s4 m4 l3">0</span>
                 </div>
                 <div class="w3-row w3-padding-16">
-                    <span class="w3-col s8 m8 l9">Valeur actuelle</span>                
-                    <span id="current-humidity-sensor-percentage" class="w3-col s4 m4 l3">0</span>
-                </div>
-                <div class="w3-row w3-padding-16">
-                    <span class="w3-col s6 m6 l7">Seuil</span>
-                    <input type="range" min="0" max="100" class="slider w3-col s4 m4 l3" id="humidity-sensor-range" oninput="updateHumiditySensorThreshold()">
-                    <span class="w3-col s2 m2 l2" id="humidity-sensor-threshold"></span>
+                    <span class="w3-col s6 m6 l7">% de déclenchement</span>
+                    <input type="range" min="0" max="100" class="slider w3-col s4 m4 l3" id="moisture-sensor-threshold-range" onchange="updateMoistureSensorThreshold()">
+                    <span class="w3-col s2 m2 l2" id="moisture-sensor-threshold-value"></span>
                 </div>
             </div>
             <div class="w3-card w3-padding w3-margin-bottom">

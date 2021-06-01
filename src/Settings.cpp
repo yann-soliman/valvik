@@ -7,8 +7,8 @@ Settings::Settings() {
     delete buffer;    
 }
 
-void Settings::toggleHumiditySensor() {
-    settings.shouldUseHumiditySensor = !settings.shouldUseHumiditySensor;
+void Settings::toggleMoistureSensor() {
+    settings.shouldUseMoistureSensor = !settings.shouldUseMoistureSensor;
     fileService.save(SETTINGS_FILE_PATH, reinterpret_cast<uint8_t*>(&settings), sizeof(SETTINGS));
 }
 
@@ -17,14 +17,19 @@ void Settings::toggleProgrammableWatering() {
     fileService.save(SETTINGS_FILE_PATH, reinterpret_cast<uint8_t*>(&settings), sizeof(SETTINGS));
 }
 
-bool Settings::shouldUseHumiditySensor() {
-    return settings.shouldUseHumiditySensor;
+void Settings::setMoistureSensorThreshold(int threshold) {
+    settings.moistureSensorThreshold = threshold;
+    fileService.save(SETTINGS_FILE_PATH, reinterpret_cast<uint8_t*>(&settings), sizeof(SETTINGS));
+}
+
+bool Settings::shouldUseMoistureSensor() {
+    return settings.shouldUseMoistureSensor;
 }
 
 bool Settings::shouldUseProgrammableWatering() {
     return settings.shouldUseProgrammableWatering;
 }
 
-int Settings::getHumiditySensorThreshold(){
-    return settings.humiditySensorThreshold;
+int Settings::getMoistureSensorThreshold(){
+    return settings.moistureSensorThreshold;
 }

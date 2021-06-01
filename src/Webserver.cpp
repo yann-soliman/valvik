@@ -36,22 +36,22 @@ void Webserver::initRoutes() {
     request->send(SPIFFS, "/index.html", "text/html");
   });
 
-  server->on("sensor/moisture/status", HTTP_GET, [valvik](AsyncWebServerRequest *request)
+  server->on("/sensor/moisture/state", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
     bool isHumid = valvik->getMoistureSensor().isHumid();
     request->send(200, "text/plain", String(isHumid));
   });
 
-  server->on("sensor/moisture/percentage", HTTP_GET, [valvik](AsyncWebServerRequest *request)
+  server->on("/sensor/moisture/percentage", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
     int value = valvik->getMoistureSensor().getPercentage();
     request->send(200, "text/plain", String(value));
   });
 
-  server->on("/valvik/status", HTTP_GET, [valvik](AsyncWebServerRequest *request)
+  server->on("/valvik/state", HTTP_GET, [valvik](AsyncWebServerRequest *request)
   {
-    bool status = valvik->isOn();
-    request->send(200, "text/plain", String(status));
+    bool state = valvik->isOn();
+    request->send(200, "text/plain", String(state));
   });
   
   server->on("/valvik/toggle", HTTP_POST, [valvik](AsyncWebServerRequest *request)
@@ -92,30 +92,28 @@ void Webserver::initRoutes() {
   {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     TIMESTAMP timestamp = valvik->getClock().now();
-    Serial.print("Getting time settings ");
-    Serial.println(timestamp);
     Settings& settings = valvik->getSettings();
-    Serial.print("Settings instance : ");
-    Serial.println((int) &settings, HEX);
     DynamicJsonBuffer jsonBuffer; 
     JsonObject &root = jsonBuffer.createObject();
     root["timestamp"] = timestamp;
-    root["shouldUseHumiditySensor"] = settings.shouldUseHumiditySensor();
+    root["shouldUseMoistureSensor"] = settings.shouldUseMoistureSensor();
     root["shouldUseProgrammableWatering"] = settings.shouldUseProgrammableWatering();
-    root["humiditySensorThreshold"] = settings.getHumiditySensorThreshold();
-    root["currentHumiditySensorPercentage"] = valvik->getMoistureSensor().getPercentage();
+    root["moistureSensorThreshold"] = settings.getMoistureSensorThreshold();
+    root["currentMoistureSensorPercentage"] = valvik->getMoistureSensor().getPercentage();
 
     root.printTo(*response);
 
     request->send(response);
   });
 
-  server->on("/settings/sensor/humidity/toggle", HTTP_PUT, [valvik](AsyncWebServerRequest *request)
+  server->on("/settings/sensor/moisture/toggle", HTTP_PUT, [valvik](AsyncWebServerRequest *request)
   {
-      Settings &ptr = valvik->getSettings();
-      Serial.print("Settings instance : ");
-      Serial.println((int) &ptr, HEX);
-      valvik->getSettings().toggleHumiditySensor();
+      valvik->getSettings().toggleMoistureSensor();
+      request->send(200);
+  });
+
+  server->on("/settings/sensor/moisture/threshold", HTTP_PUT, [valvik](AsyncWebServerRequest * request){}, NULL, [valvik](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
+      valvik->setMoistureSensorThreshold(atoi(reinterpret_cast<char*>(data)));
       request->send(200);
   });
 

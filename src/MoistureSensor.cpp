@@ -5,16 +5,22 @@
 // min = 1000
 // humide = 0
 
-MoistureSensor::MoistureSensor() {
+MoistureSensor::MoistureSensor(int threshold) {
     pinMode(PIN, INPUT);
+    this->threshold = threshold;
 }
 
-bool MoistureSensor::isHumid() {
-    uint16_t humidity = analogRead(PIN);
-    Serial.printf("humidity : %i\n", humidity);
-    return humidity < 512;
+bool MoistureSensor::isHumid() {    
+    Serial.printf("threshold : %d\n", threshold);
+    return getPercentage() >= threshold;
 }
 
 int MoistureSensor::getPercentage() {
-    return map(analogRead(PIN), 0, 4095, 100, 0);
+    int value = analogRead(PIN);
+    Serial.printf("Moisture sensor value : %d\n", value);
+    return map(value, 0, 4096, 100, 0);
+}
+
+void MoistureSensor::setThreshold(int threshold) {
+    this->threshold = threshold;
 }

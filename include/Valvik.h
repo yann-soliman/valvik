@@ -17,6 +17,7 @@ public:
     void turnElectrovanneOn();
     void turnElectrovanneOff();
     void setTime(TIMESTAMP time);
+    void setMoistureSensorThreshold(int threshold);
     Clock& getClock();
     Settings& getSettings();
     WateringHisto& getWateringHisto();

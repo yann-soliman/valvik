@@ -51,13 +51,18 @@
         }
     }
 
+    void Valvik::setMoistureSensorThreshold(int threshold) {
+        settings.setMoistureSensorThreshold(threshold);
+        moistureSensor.setThreshold(threshold);
+    }
+
     Clock& Valvik::getClock() {
         return clock;
     }
 
     Settings& Valvik::getSettings() {
-        Serial.print("Getting settings, shouldUseHumiditySensor : ");
-        Serial.println(settings.shouldUseHumiditySensor());
+        Serial.print("Getting settings, shouldUseMoistureSensor : ");
+        Serial.println(settings.shouldUseMoistureSensor());
         return settings;
     }
 
