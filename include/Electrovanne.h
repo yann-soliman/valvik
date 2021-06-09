@@ -3,10 +3,10 @@
 class Electrovanne {
 public:
     Electrovanne();
-    void on(int minutes, int seconds);
-    static void off(); // static needed pour faire un attachInterrupt...
+    void on();
+    void off();
     bool isOn();
 private:
-    static const int PIN = 15;    
+    const int PIN = 15;    
     hw_timer_t * timer;
 };

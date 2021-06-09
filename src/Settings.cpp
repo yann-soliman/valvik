@@ -22,6 +22,11 @@ void Settings::setMoistureSensorThreshold(int threshold) {
     fileService.save(SETTINGS_FILE_PATH, reinterpret_cast<uint8_t*>(&settings), sizeof(SETTINGS));
 }
 
+void Settings::setProgrammableWateringCron(char * cron) {
+    settings.programmableWateringCron = *cron_parse_expr(cron, nullptr);
+    fileService.save(SETTINGS_FILE_PATH, reinterpret_cast<uint8_t*>(&settings), sizeof(SETTINGS));
+}
+
 bool Settings::shouldUseMoistureSensor() {
     return settings.shouldUseMoistureSensor;
 }
@@ -32,4 +37,8 @@ bool Settings::shouldUseProgrammableWatering() {
 
 int Settings::getMoistureSensorThreshold(){
     return settings.moistureSensorThreshold;
+}
+
+cron_expr Settings::getProgrammableWateringCron(){
+    return settings.programmableWateringCron;
 }

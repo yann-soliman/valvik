@@ -23,6 +23,7 @@ void setup() {
 }
 
 void loop(){
+  valvik->process();
   
   //dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   //dnsServer.processNextRequest();
@@ -32,7 +33,6 @@ void loop(){
 // * OTA
 // * Réglage plage horaire
 // * deep sleep strategy
-// * fix bug watering
 // * websocket récupération état capteur
 // * Serial over Wifi ?
 // * Activation X minutes

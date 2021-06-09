@@ -24,6 +24,7 @@
         "system_error": "cpp",
         "regex": "cpp",
         "typeinfo": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "ccronexpr.h": "c"
     }
 }

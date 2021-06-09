@@ -115,6 +115,7 @@ function refreshSettings(settings) {
     document.getElementById("current-moisture-sensor-percentage").innerHTML = settings.currentMoistureSensorPercentage;
     document.getElementById("moisture-sensor-threshold-range").value = settings.moistureSensorThreshold;
     document.getElementById("moisture-sensor-threshold-value").innerHTML = settings.moistureSensorThreshold;
+    document.getElementById("programmable-watering-cron").value = settings.programmableWateringCron;
 }
 
 function showTime(timestamp) {
@@ -141,6 +142,12 @@ function updateMoistureSensorThreshold() {
         () => fetch("settings/sensor/moisture/threshold", {method: "PUT", body: threshold})
         .catch(e => showError("Error while settings moisture sensor percentage" + e))
         , 500);
+}
+
+function setProgrammableWateringCron() {
+    const programmableWateringCron = document.getElementById("programmable-watering-cron").value;
+    fetch('settings/programmable-watering/cron', {method: "PUT", body: programmableWateringCron})
+    .catch(e => showError("Error while setting programmable watering cron " + e));
 }
 
 function openTab(tabId) {

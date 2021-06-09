@@ -5,14 +5,12 @@ Electrovanne::Electrovanne() {
     digitalWrite(PIN, HIGH); // <-- HIGH car test avec led à anode commune
 }
 
-void Electrovanne::on(int minutes, int seconds) {
+void Electrovanne::on() {
     Serial.println("Turning electrovanne ON");
     digitalWrite(PIN, LOW); // <-- LOW car test avec led à anode commune
     Serial.println("Electrovanne turned ON");
 
     Serial.println("Turning electrovanne ON");
-    int secondBeforeTurnOff = minutes * 60 + seconds;
-    Serial.printf("Settings electrovanne to turn off in %d seconds\n", secondBeforeTurnOff);
 
     // 0 -> numéro du timer (entre 0 et 3 inclus)
     // 80 -> diviseur, 80MHz -> 80, comme ça t'es "synchro" pour les calculs (voir point 5)
@@ -27,12 +25,12 @@ void Electrovanne::on(int minutes, int seconds) {
 
     // timerAlarmEnable -> active les interruptions pour ce timer
 
-    timer = timerBegin(0, 80, true);
-    timerAttachInterrupt(timer, (void (*)()) &off, true);
-    timerAlarmWrite(timer, secondBeforeTurnOff * 1000000, false);
-    delay(1000);
-    timerRestart(timer);
-    timerAlarmEnable(timer);    
+    // timer = timerBegin(0, 80, true);
+    // timerAttachInterrupt(timer, (void (*)()) &off, true);
+    // timerAlarmWrite(timer, secondBeforeTurnOff * 1000000, false);
+    // delay(1000);
+    // timerRestart(timer);
+    // timerAlarmEnable(timer);    
 }
 
 void Electrovanne::off() {    

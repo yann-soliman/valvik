@@ -106,7 +106,18 @@
                         </label>
                     </span>
                 </div>
+            
+                <div class="w3-row w3-padding-16">
+                    <div class="w3-col s6 m6 l7">cron</div>
+                    <div class="w3-col s4 m4 l3">
+                        <input id="programmable-watering-cron" style="width: 100%" type="text">
+                    </div>
+                    <div class="w3-col s2 m2 l2">
+                        <i onclick="setProgrammableWateringCron()" style="padding-left:1em" class="fas fa-save"></i> 
+                    </div>  
+                </div>
             </div>
+
             <div class="w3-card w3-padding w3-margin-bottom">
                 <h4 class="w3-padding">Historique</h4>
                 <button onclick="resetHistory()" class="w3-button w3-round-xlarge w3-green w3-xlarge w3-ripple w3-wide">RESET</button>

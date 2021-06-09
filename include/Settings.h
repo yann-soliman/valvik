@@ -18,6 +18,8 @@ public:
     bool shouldUseMoistureSensor();
     bool shouldUseProgrammableWatering();
     int getMoistureSensorThreshold();
+    void setProgrammableWateringCron(char * cron);
+    cron_expr getProgrammableWateringCron();
     void reset();
 
 private:

@@ -18,6 +18,9 @@ public:
     void IRAM_ATTR turnElectrovanneOff();
     void setTime(TIMESTAMP time);
     void setMoistureSensorThreshold(int threshold);
+    void setProgrammableWateringCron(char * cron);
+    void process();
+
     Clock& getClock();
     Settings& getSettings();
     WateringHisto& getWateringHisto();
@@ -32,4 +35,7 @@ private :
     FileService fileService;
     Settings settings;
     WateringHisto wateringHisto;
+    TIMESTAMP wateringDuration;
+
+    bool shouldStopWatering();
 };

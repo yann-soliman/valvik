@@ -3,7 +3,24 @@
     Valvik::Valvik() {    
         currentWattering.start = 0;
         currentWattering.end = 0;
+        wateringDuration = 0;
     }
+
+    void Valvik::process() {
+        if(shouldStopWatering()) {
+            turnElectrovanneOff();
+            wateringDuration = 0;
+        }
+    }
+
+    bool Valvik::shouldStopWatering() {        
+        if(electrovanne.isOn() && wateringDuration != 0) {
+            TIMESTAMP duration = clock.now() - currentWattering.start;
+            return duration > wateringDuration;
+        }
+        return false;
+    }
+
 
     bool Valvik::isOn() {
         return electrovanne.isOn();
@@ -20,12 +37,13 @@
     }    
     
     void Valvik::turnElectrovanneOn(int minutes, int seconds) {
-        Serial.println("Valvik : turnElectrovanneOn");
         if(electrovanne.isOn()) {
             Serial.println("Valvik is already watering");
             return ;
         }        
-        electrovanne.on(minutes, seconds);
+        wateringDuration = (minutes * 60 + seconds) * 1000;
+        Serial.printf("Turning electrovanne on for %d ms", wateringDuration);
+        electrovanne.on();
         this->currentWattering.start = this->clock.now();
         this->currentWattering.end = 0;            
     }
@@ -76,4 +94,8 @@
 
     MoistureSensor& Valvik::getMoistureSensor() {
         return moistureSensor;
+    }
+
+    void Valvik:: setProgrammableWateringCron(char * cron) {
+        settings.prog
     }

@@ -96,6 +96,7 @@ void Webserver::initRoutes() {
     root["shouldUseProgrammableWatering"] = settings.shouldUseProgrammableWatering();
     root["moistureSensorThreshold"] = settings.getMoistureSensorThreshold();
     root["currentMoistureSensorPercentage"] = valvik->getMoistureSensor().getPercentage();
+    root["programmableWateringCron"] = settings.getProgrammableWateringCron();
 
     root.printTo(*response);
 
@@ -147,6 +148,13 @@ void Webserver::initRoutes() {
       valvik->getWateringHisto().reset();
       request->send(200);
   });
+
+
+  server->on("/settings/programmable-watering/cron", HTTP_PUT, [valvik](AsyncWebServerRequest * request){}, NULL, [valvik](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
+      valvik->getSettings().setProgrammableWateringCron(reinterpret_cast<char*>(data));
+      request->send(200);
+  });
+  
 
   server->serveStatic("/", SPIFFS, "/");
 
