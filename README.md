@@ -8,4 +8,12 @@ L'arrosage est controlable :
 
 # Interface
 L'interface est disponible en se connectant en wifi sur le point d'accès "Valvik" et en se rendant sur http://192.168.4.1
-//TODO: mettre des imprs écran
+
+## Accueil
+![Front Page](front_page.png)
+
+## Historique
+![Historique](historique.png)
+
+## Réglages
+![Réglages](réglages.png)
